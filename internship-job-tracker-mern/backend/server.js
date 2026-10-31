@@ -1,0 +1,11 @@
+require('dotenv').config();
+const express = require('express'), cors = require('cors');
+const connectDB = require('./config/db');
+const app = express();
+app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(express.json());
+app.use('/api/students', require('./routes/students'));
+app.use('/api/applications', require('./routes/applications'));
+app.get('/api/health', (req,res) => res.json({ ok: true }));
+app.use((err, req, res, next) => { console.error(err); res.status(500).json({ error: err.message || 'Server error' }); });
+connectDB().then(() => app.listen(process.env.PORT || 5000, () => console.log('API running on port 5000'))).catch(e => { console.error(e.message); process.exit(1); });
